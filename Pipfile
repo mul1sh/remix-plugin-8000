@@ -1,14 +1,11 @@
 [[source]]
-
-url = "https://pypi.python.org/simple"
+url = "https://pypi.org/simple"
 verify_ssl = true
-
+name = "pypi"
 
 [packages]
 
-manticore = "*"
-mythril = "*"
+[dev-packages]
 
 [requires]
-
-python_version = "3.6"⏎
+python_version = "3.7"
