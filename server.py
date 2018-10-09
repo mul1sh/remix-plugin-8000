@@ -15,7 +15,6 @@ import shlex
 
 import re
 import textwrap
-import ManticoreEVM
 
 SOLC_PATH = os.environ.get('SOLC_PATH', '/usr/local/bin/solc')
 
@@ -25,7 +24,7 @@ def escape_ansi(line):
 
 class MyServer(BaseHTTPServer.HTTPServer):
     def __init__(self):
-        self.port = 8000
+        self.port = 8100
         SocketServer.TCPServer.__init__(self,('', self.port), MyHandler)
 
     def server_bind(self):
@@ -119,43 +118,7 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         self.end_headers()
 
         self.wfile.write(output)
-
-
-    def do_manticore(self, buf):
-        contract_src="""
-        contract Adder {
-            function incremented(uint value) public returns (uint){
-                if (value == 1)
-                    revert();
-                return value + 1;
-            }
-        }
-        """
-        m = ManticoreEVM()
-
-        user_account = m.create_account(balance=1000)
-        contract_account = m.solidity_create_contract(contract_src,
-                                                      owner=user_account,
-                                                      balance=0)
-        value = m.make_symbolic_value()
-
-        contract_account.incremented(value)
-
-        for state in m.running_states:
-        print("can value be 1? {}".format(state.can_be_true(value == 1)))
-        print("can value be 200? {}".format(state.can_be_true(value == 200)))
-             output = {'status': 1, 'output': result }
-        output = json.dumps(output)
-
-        self.send_response(200)
-        self.send_header('Content-Type', 'application/json')
-        self.send_header('Content-Length', str(len(output)))
-        self.end_headers()
-
-        self.wfile.write(output)
-
         
-
 
     def do_POST(self):
         if self.path not in ('/slither', '/manticore', '/solium', '/mythril'):
@@ -174,7 +137,7 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         elif self.path == '/mythril':
             self.do_mythril(buf)
 
-PORT = 8000
+PORT = 8100
 
 httpd = MyServer() # SocketServer.TCPServer(("", PORT), MyHandler)
 
