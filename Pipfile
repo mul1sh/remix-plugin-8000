@@ -7,6 +7,5 @@ verify_ssl = true
 manticore = "*"
 mythril = "*"
 
-
 [requires]
 python_version = "3.6"⏎
